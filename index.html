@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Straightest Tool in the Shed</title>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #141420;
+            color: #e8e8f0;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 40px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero .subtitle {
+            margin-top: 16px;
+            color: #888;
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        /* Sections */
+        section { padding: 50px 0; }
+
+        h2 {
+            font-size: 30px;
+            color: #fff;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: #ccc;
+            margin: 28px 0 12px;
+        }
+
+        p { margin-bottom: 20px; color: #ccc; }
+
+        /* Images */
+        .figure {
+            margin: 28px 0;
+            text-align: center;
+        }
+
+        .figure img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .caption {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* Formula blocks */
+        .formula-block {
+            margin: 24px auto;
+            text-align: center;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        /* Definition list */
+        .def-list {
+            margin: 16px 0 20px 20px;
+            color: #ccc;
+        }
+
+        .def-list li {
+            margin-bottom: 8px;
+            list-style: none;
+        }
+
+        .def-list li::before {
+            content: "– ";
+            color: #666;
+        }
+
+        /* Ingredient list (Part 3) */
+        .step-list {
+            counter-reset: steps;
+            margin: 16px 0;
+            padding: 0;
+        }
+
+        .step-list li {
+            list-style: none;
+            counter-increment: steps;
+            margin-bottom: 24px;
+            padding-left: 48px;
+            position: relative;
+            color: #ccc;
+        }
+
+        .step-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 32px;
+            height: 32px;
+            background: #2a2a44;
+            border: 1px solid #4a4a70;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-family: sans-serif;
+            color: #a0a0d0;
+        }
+
+        .step-list li strong {
+            display: block;
+            color: #e0e0f0;
+            margin-bottom: 4px;
+        }
+
+        /* Quiz */
+        .quiz {
+            background: #1c1c2e;
+            border: 1px solid #2a2a40;
+            border-radius: 10px;
+            padding: 28px;
+            margin: 36px 0;
+        }
+
+        .quiz-question {
+            font-size: 18px;
+            color: #e0e0f0;
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+
+        .quiz-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quiz-btn {
+            background: #2a2a44;
+            color: #e0e0f0;
+            border: 1px solid #3a3a55;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            flex: 1;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .quiz-btn:hover { background: #363658; border-color: #5a5a80; }
+
+        .quiz-btn.correct {
+            background: #1a4a2a;
+            border-color: #50b878;
+            color: #70e898;
+        }
+
+        .quiz-btn.wrong {
+            background: #2a2248;
+            border-color: #8264dc;
+            color: #a88ef0;
+        }
+
+        .quiz-btn.disabled { pointer-events: none; opacity: 0.6; }
+
+        .quiz-feedback {
+            margin-top: 14px;
+            font-size: 16px;
+            min-height: 24px;
+            line-height: 1.5;
+        }
+
+        .quiz-feedback.success { color: #70e898; }
+        .quiz-feedback.fail    { color: #a88ef0; }
+
+        /* Formula quiz buttons */
+        .formula-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px;
+            line-height: 1.6;
+        }
+
+        /* Game embed */
+        .game-section { padding: 50px 0; }
+
+        .game-frame-wrap {
+            width: 100%;
+            max-width: 820px;
+            margin: 30px auto;
+            aspect-ratio: 820 / 700;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #2a2a40;
+        }
+
+        .game-frame-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Divider */
+        .section-rule {
+            border: none;
+            border-top: 1px solid #2a2a40;
+            margin: 0;
+        }
+
+        /* Links */
+        a { color: #80b4f0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #444;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 680px) {
+            .hero h1 { font-size: 28px; }
+            h2 { font-size: 24px; }
+            body { font-size: 16px; }
+            .quiz-options { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>The Straightest Tool in the Shed</h1>
+    <p class="subtitle">A minimodule on linear regression — from Victorian curiosity to the engine of modern AI</p>
+</div>
+
+<div class="container">
+
+<!-- ── Part 1 ──────────────────────────────────────────────────────────────── -->
+<section>
+    <h2>The First Regression in the World</h2>
+
+    <p>In 1885, Francis Galton was studying something surprisingly human: the height of parents and their children. He noticed something curious — tall parents tended to have tall children, but those children were usually a little shorter than their parents. Short parents had short children, but slightly taller ones. Everything seemed to drift back toward the average.</p>
+
+    <div class="figure">
+        <img src="images/galtonreg.jpg" alt="Galton's regression chart">
+        <div class="caption">Rate of regression in hereditary stature (Galton 1886 Plate IX, fig. a)</div>
+    </div>
+
+    <p>He called this phenomenon "regression to the mean" — and the name stuck, long after the concept grew into something far more powerful.</p>
+
+    <p>What Galton was really doing, without modern language for it, was drawing a line through a cloud of points. A line that best captured the relationship between two things: parent height and child height. That line is what we now call a regression line.</p>
+
+    <h3>So what is linear regression?</h3>
+
+    <p>At its heart, linear regression is the art of finding the best straight line through a set of data points. Given two variables — say, hours studied and exam score, or house size and price — we want to describe how one changes as the other changes. That line has a simple form:</p>
+
+    <div class="formula-block">$$\hat{y} = w_0 + w_1 \, x$$</div>
+
+    <ul class="def-list">
+        <li>\(x\) is what we know (the input, e.g. hours studied)</li>
+        <li>\(\hat{y}\) is what we predict (the output, e.g. exam score)</li>
+        <li>\(w_1\) is the <strong>slope</strong> — how much \(\hat{y}\) changes when \(x\) increases by 1</li>
+        <li>\(w_0\) is the <strong>intercept</strong> — where the line crosses the vertical axis when \(x = 0\)</li>
+    </ul>
+
+    <p>The challenge: how do we find the <em>best</em> values of \(w_0\) and \(w_1\)?</p>
+
+    <!-- Quiz 1 -->
+    <div class="quiz" id="quiz1">
+        <div class="quiz-question">In \(\hat{y} = w_0 + w_1 x\), which parameter controls how steeply the line rises?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz('quiz1', this, true)">\(w_1\) — the slope</button>
+            <button class="quiz-btn" onclick="answerQuiz('quiz1', this, false)">\(w_0\) — the intercept</button>
+        </div>
+        <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ── Part 2 ──────────────────────────────────────────────────────────────── -->
+<section>
+    <h2>The Analytical Solution — Finding the Best Line</h2>
+
+    <p>"Best" needs a definition. The most natural one: the best line is the one that minimizes the total distance between the line's predictions and the actual data points. We call these distances <em>residuals</em>.</p>
+
+    <p>To avoid positive and negative errors cancelling each other out, we square them. This gives us the <strong>Sum of Squared Errors (SSE)</strong>, also called the loss function:</p>
+
+    <div class="formula-block">$$L(w_0, w_1) = \sum_{i=1}^{n}\bigl(y_i - w_0 - w_1 x_i\bigr)^2$$</div>
+
+    <p>Here, \(y_i\) are the real values and \(\hat{y}_i\) are our predictions. We want to make \(L\) as small as possible.</p>
+
+    <p>The beautiful thing about this problem is that it has an exact, closed-form solution. Using calculus, we set the derivatives of \(L\) with respect to \(w_0\) and \(w_1\) to zero and solve. The result is:</p>
+
+    <div class="formula-block">$$w_1 = \frac{\displaystyle\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\displaystyle\sum_{i=1}^{n}(x_i - \bar{x})^2}$$</div>
+
+    <div class="formula-block">$$w_0 = \bar{y} - w_1 \bar{x}$$</div>
+
+    <p>Where \(\bar{x}\) and \(\bar{y}\) are simply the averages of \(x\) and \(y\).</p>
+
+    <p>In matrix form — useful when we have many input variables — this becomes even more compact:</p>
+
+    <div class="formula-block">$$\mathbf{w} = (X^\top X)^{-1} X^\top \mathbf{y}$$</div>
+
+    <p>This is known as the <strong>Ordinary Least Squares (OLS)</strong> solution. Plug in your data, compute the formula, and you immediately get the optimal line. No guessing, no iteration — just math.</p>
+
+    <!-- Quiz 2 -->
+    <div class="quiz" id="quiz2">
+        <div class="quiz-question">Which of these formulas measures the Mean Squared Error — the average of squared prediction errors?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn formula-option" onclick="answerQuiz('quiz2', this, true)">
+                $$L = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$
+            </button>
+            <button class="quiz-btn formula-option" onclick="answerQuiz('quiz2', this, false)">
+                $$L = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$
+            </button>
+        </div>
+        <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ── Part 3 ──────────────────────────────────────────────────────────────── -->
+<section>
+    <h2>Regression as Machine Learning — Teaching a Line to Learn</h2>
+
+    <p>Now let's shift perspective. What if, instead of solving the formula directly, we taught a computer to find the best line through trial and error? This is where linear regression becomes the simplest example of a machine learning algorithm.</p>
+
+    <p>The setup has four ingredients:</p>
+
+    <ol class="step-list">
+        <li>
+            <strong>Data</strong>
+            We have a dataset: pairs of inputs \(x_i\) and outputs \(y_i\). This is what the model will learn from.
+        </li>
+        <li>
+            <strong>A model with parameters</strong>
+            Our model is the line \(\hat{y} = w_0 + w_1 x\). The weights \(w_0\) and \(w_1\) are knobs we can turn. At first, we set them randomly.
+        </li>
+        <li>
+            <strong>A loss function</strong>
+            We need a way to measure how bad our current line is. We use the <strong>Mean Squared Error (MSE)</strong>:
+            <div class="formula-block">$$L(w_0, w_1) = \frac{1}{n}\sum_{i=1}^{n}(y_i - w_0 - w_1 x_i)^2$$</div>
+            The larger this value, the worse our line fits the data. Our goal: make it as small as possible.
+        </li>
+        <li>
+            <strong>Gradient descent — walking downhill</strong>
+            Imagine the loss function as a hilly landscape. You are standing somewhere on that landscape, and you want to reach the lowest valley. The strategy: look around, find the direction that goes downhill the fastest, and take a small step that way. Repeat.
+            <p style="margin-top:12px;">That "downhill direction" is given by the gradient — the partial derivatives of \(L\):</p>
+            <div class="formula-block">$$\frac{\partial L}{\partial w_1} = -\frac{2}{n}\sum_{i=1}^{n} x_i(y_i - w_0 - w_1 x_i)$$</div>
+            <div class="formula-block">$$\frac{\partial L}{\partial w_0} = -\frac{2}{n}\sum_{i=1}^{n}(y_i - w_0 - w_1 x_i)$$</div>
+            <p style="margin-top:8px;">At each step, we update the weights by moving <em>against</em> the gradient (since we want to go downhill):</p>
+            <div class="formula-block">$$w_1 \;\leftarrow\; w_1 - \alpha \cdot \frac{\partial L}{\partial w_1}$$</div>
+            <div class="formula-block">$$w_0 \;\leftarrow\; w_0 - \alpha \cdot \frac{\partial L}{\partial w_0}$$</div>
+            <p style="margin-top:8px;">Where \(\alpha\) (alpha) is the <strong>learning rate</strong> — the size of each step. Too large, and you overshoot the valley. Too small, and it takes forever to get there.</p>
+        </li>
+    </ol>
+
+    <p>After many iterations, the weights converge to their optimal values — the same ones the OLS formula would have given you directly.</p>
+
+    <!-- Quiz 3 -->
+    <div class="quiz" id="quiz3">
+        <div class="quiz-question">What does the learning rate \(\alpha\) control in gradient descent?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz('quiz3', this, true)">The size of each update step</button>
+            <button class="quiz-btn" onclick="answerQuiz('quiz3', this, false)">The number of training iterations</button>
+        </div>
+        <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ── Game ───────────────────────────────────────────────────────────────── -->
+<section class="game-section">
+    <h2>Now Try It Yourself</h2>
+    <p>You and a partner each get your own weight space — a 2D plane of possible \((w_0, w_1)\) pairs. Click anywhere in your panel to test that combination. Dots glow red when you are close to a good fit and blue when you are far. After each guess you'll see <em>Warmer</em> or <em>Colder</em> compared to your own previous attempt. Ten turns total, alternating. Lowest MSE wins.</p>
+
+    <div class="game-frame-wrap">
+        <iframe src="game.html" title="Regression Quest" loading="lazy" tabindex="-1"
+                sandbox="allow-scripts allow-same-origin" allowfullscreen></iframe>
+    </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ── Why it matters ─────────────────────────────────────────────────────── -->
+<section>
+    <h2>Why Does This Matter?</h2>
+    <p>For linear regression, gradient descent is overkill — we have the exact formula. But the real power is that this same loop:</p>
+    <p style="text-align:center; color:#a0a0d0; font-style:italic; margin: 24px 0;">model &rarr; loss &rarr; gradient &rarr; update</p>
+    <p>…is the engine behind every neural network, every large language model, every modern AI system. The architecture changes. The loss function changes. The gradients get more complex. But the loop stays the same. Linear regression is where that story begins.</p>
+</section>
+
+<!-- ── Code ───────────────────────────────────────────────────────────────── -->
+<section>
+    <h2>Tinker with the Code</h2>
+    <p>The game is written in Python using Pygame, so you can open <code>main.py</code> and modify it directly. The source code is available here:</p>
+    <p><a href="https://github.com/i-yam/hot_or_cold" target="_blank">https://github.com/i-yam/hot_or_cold</a></p>
+</section>
+
+</div>
+
+<footer>
+    The Straightest Tool in the Shed
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────────────────────────────── -->
+<script>
+// Quiz data
+const quizData = {
+    quiz1: {
+        correct: "Exactly! w\u2081 is the slope \u2014 it controls how steeply the line rises. w\u2080 is the intercept: the value of \u0177 when x&nbsp;=&nbsp;0.",
+        wrong:   "Not quite! w\u2080 is the intercept \u2014 where the line meets the vertical axis. It\u2019s w\u2081 that controls the steepness."
+    },
+    quiz2: {
+        correct: "Correct! MSE squares the residuals and averages them. Squaring ensures negative and positive errors don\u2019t cancel out.",
+        wrong:   "Not quite \u2014 that\u2019s the Mean Absolute Error (MAE). MSE squares the residuals instead of taking their absolute value, which makes it smooth and easy to differentiate."
+    },
+    quiz3: {
+        correct: "Exactly! Too large and the update overshoots the minimum; too small and convergence is painfully slow.",
+        wrong:   "Not quite \u2014 \u03b1 controls the step size at each iteration, not the total number of steps. The number of iterations is a separate hyperparameter."
+    }
+};
+
+function answerQuiz(quizId, btn, isCorrect) {
+    const quiz     = document.getElementById(quizId);
+    const feedback = document.getElementById(quizId + '-feedback');
+    quiz.querySelectorAll('.quiz-btn').forEach(b => b.classList.add('disabled'));
+    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    feedback.className = 'quiz-feedback ' + (isCorrect ? 'success' : 'fail');
+    feedback.innerHTML = quizData[quizId][isCorrect ? 'correct' : 'wrong'];
+}
+
+// Render KaTeX after all deferred scripts have loaded
+window.addEventListener('load', function () {
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true  },
+                { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+        });
+    }
+});
+</script>
+
+</body>
+</html>
