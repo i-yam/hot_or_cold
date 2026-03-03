@@ -15,7 +15,9 @@ Then upload build/web/ to GitHub Pages.
 
 import asyncio, math, colorsys, random
 import pygame
-import numpy as np
+
+def _linspace(a, b, n):
+    return [a + (b - a) * i / (n - 1) for i in range(n)]
 
 # ── Layout ─────────────────────────────────────────────────────────────────────
 SW, SH   = 960, 600
@@ -64,7 +66,8 @@ def in_grid(x, y, pi):
 
 # ── MSE & colour ───────────────────────────────────────────────────────────────
 def calc_mse(xs, ys, w1, w0):
-    return float(np.mean((ys - (w1 * xs + w0)) ** 2))
+    n = len(xs)
+    return sum((y - (w1 * x + w0)) ** 2 for x, y in zip(xs, ys)) / n
 
 def heat(val, lo, hi):
     """MSE → colour: blue (cold/high) → red (hot/low), log-scaled."""
@@ -84,12 +87,12 @@ class Game:
     def _gen_data(self):
         tw1 = random.uniform(-2.5, 2.5)
         tw0 = random.uniform(-2.5, 2.5)
-        xs  = np.random.uniform(-4.5, 4.5, 30)
-        ys  = tw1 * xs + tw0 + np.random.normal(0, 0.9, 30)
+        xs  = [random.uniform(-4.5, 4.5) for _ in range(30)]
+        ys  = [tw1 * x + tw0 + random.gauss(0, 0.9) for x in xs]
         self.xs, self.ys = xs, ys
         vals = [calc_mse(xs, ys, v1, v0)
-                for v0 in np.linspace(WLO, WHI, 20)
-                for v1 in np.linspace(WLO, WHI, 20)]
+                for v0 in _linspace(WLO, WHI, 20)
+                for v1 in _linspace(WLO, WHI, 20)]
         self.log_lo = math.log(min(vals) + 0.1)
         self.log_hi = math.log(max(vals) + 0.1)
 
@@ -249,8 +252,8 @@ def draw_scatter(s, game, F):
     xs, ys = game.xs, game.ys
     xmin, xmax = -5.0, 5.0
     mg   = 0.8
-    ymin = float(np.min(ys)) - mg
-    ymax = float(np.max(ys)) + mg
+    ymin = min(ys) - mg
+    ymax = max(ys) + mg
 
     def d2p(x, y):
         px = ox + GML + (x - xmin) / (xmax - xmin) * GS
