@@ -358,10 +358,10 @@ async def main():
     clock = pygame.time.Clock()
 
     F = {
-        "bg": pygame.font.SysFont("Arial", 30, bold=True),
-        "ti": pygame.font.SysFont("Arial", 22, bold=True),
-        "nm": pygame.font.SysFont("Arial", 18),
-        "sm": pygame.font.SysFont("Arial", 14),
+        "bg": pygame.font.Font(None, 38),
+        "ti": pygame.font.Font(None, 28),
+        "nm": pygame.font.Font(None, 22),
+        "sm": pygame.font.Font(None, 17),
     }
 
     game = Game()
