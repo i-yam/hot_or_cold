@@ -282,7 +282,7 @@
 <section>
     <h2>The First Regression in the World</h2>
 
-    <p>In 1885, Francis Galton was studying something surprisingly human: the height of parents and their children. He noticed something curious — tall parents tended to have tall children, but those children were usually a little shorter than their parents. Short parents had short children, but slightly taller ones. Everything seemed to drift back toward the average.</p>
+    <p>In 1885, Francis Galton was studying the height of parents and their children. He noticed something curious — tall parents tended to have tall children, but those children were usually a little shorter than their parents. Short parents had short children, but slightly taller ones. Everything seemed to drift back toward the average.</p>
 
     <div class="figure">
         <img src="images/galtonreg.jpg" alt="Galton's regression chart">
@@ -291,11 +291,11 @@
 
     <p>He called this phenomenon "regression to the mean" — and the name stuck, long after the concept grew into something far more powerful.</p>
 
-    <p>What Galton was really doing, without modern language for it, was drawing a line through a cloud of points. A line that best captured the relationship between two things: parent height and child height. That line is what we now call a regression line.</p>
+    <p>What Galton was really doing, without modern language for it, was drawing a line through a cloud of points. A line that best captured the relationship between two things: parent height and child height. That line is what we now call a regression line — and the method he used to find it inherited the name. We still call it regression today.</p>
 
-    <h3>So what is linear regression?</h3>
+    <h3>What is linear regression?</h3>
 
-    <p>At its heart, linear regression is the art of finding the best straight line through a set of data points. Given two variables — say, hours studied and exam score, or house size and price — we want to describe how one changes as the other changes. That line has a simple form:</p>
+    <p>At its heart, linear regression is finding the best straight line through a set of data points. Given two variables — say, hours studied and exam score, or house size and price — we want to describe how one changes as the other changes. That line has a simple form:</p>
 
     <div class="formula-block">$$\hat{y} = w_0 + w_1 \, x$$</div>
 
@@ -325,13 +325,11 @@
 <section>
     <h2>The Analytical Solution — Finding the Best Line</h2>
 
-    <p>"Best" needs a definition. The most natural one: the best line is the one that minimizes the total distance between the line's predictions and the actual data points. We call these distances <em>residuals</em>.</p>
+    <p>"Best" needs a definition. The most natural one: the best line is the one that minimizes the total prediction error between predictions and actual data points. We call these differences <em>residuals</em>.</p>
 
-    <p>To avoid positive and negative errors cancelling each other out, we square them. This gives us the <strong>Sum of Squared Errors (SSE)</strong>, also called the loss function:</p>
+    <p>To avoid positive and negative errors cancelling each other out, we square them and take the average. This gives us the <strong>Mean Squared Error (MSE)</strong>:</p>
 
-    <div class="formula-block">$$L(w_0, w_1) = \sum_{i=1}^{n}\bigl(y_i - w_0 - w_1 x_i\bigr)^2$$</div>
-
-    <p>Here, \(y_i\) are the real values and \(\hat{y}_i\) are our predictions. We want to make \(L\) as small as possible.</p>
+    <div class="formula-block">$$L(w_0, w_1) = \frac{1}{n}\sum_{i=1}^{n}\bigl(y_i - w_0 - w_1 x_i\bigr)^2$$</div>
 
     <p>The beautiful thing about this problem is that it has an exact, closed-form solution. Using calculus, we set the derivatives of \(L\) with respect to \(w_0\) and \(w_1\) to zero and solve. The result is:</p>
 
@@ -339,7 +337,7 @@
 
     <div class="formula-block">$$w_0 = \bar{y} - w_1 \bar{x}$$</div>
 
-    <p>Where \(\bar{x}\) and \(\bar{y}\) are simply the averages of \(x\) and \(y\).</p>
+    <p>Where \(\bar{x}\) and \(\bar{y}\) are simply the averages of \(x\) and \(y\). The numerator of \(w_1\) measures how \(x\) and \(y\) move together; the denominator measures how much \(x\) varies on its own.</p>
 
     <p>In matrix form — useful when we have many input variables — this becomes even more compact:</p>
 
@@ -349,14 +347,10 @@
 
     <!-- Quiz 2 -->
     <div class="quiz" id="quiz2">
-        <div class="quiz-question">Which of these formulas measures the Mean Squared Error — the average of squared prediction errors?</div>
+        <div class="quiz-question">Does finding the optimal weights for linear regression require an iterative algorithm?</div>
         <div class="quiz-options">
-            <button class="quiz-btn formula-option" onclick="answerQuiz('quiz2', this, true)">
-                $$L = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$
-            </button>
-            <button class="quiz-btn formula-option" onclick="answerQuiz('quiz2', this, false)">
-                $$L = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$
-            </button>
+            <button class="quiz-btn" onclick="answerQuiz('quiz2', this, false)">Yes — you iterate until the weights converge</button>
+            <button class="quiz-btn" onclick="answerQuiz('quiz2', this, true)">No — the OLS formula gives the exact answer in one step</button>
         </div>
         <div class="quiz-feedback" id="quiz2-feedback"></div>
     </div>
@@ -370,7 +364,7 @@
 
     <p>Now let's shift perspective. What if, instead of solving the formula directly, we taught a computer to find the best line through trial and error? This is where linear regression becomes the simplest example of a machine learning algorithm.</p>
 
-    <p>The setup has four ingredients:</p>
+    <p>The setup has five ingredients:</p>
 
     <ol class="step-list">
         <li>
@@ -398,9 +392,11 @@
             <div class="formula-block">$$w_0 \;\leftarrow\; w_0 - \alpha \cdot \frac{\partial L}{\partial w_0}$$</div>
             <p style="margin-top:8px;">Where \(\alpha\) (alpha) is the <strong>learning rate</strong> — the size of each step. Too large, and you overshoot the valley. Too small, and it takes forever to get there.</p>
         </li>
+        <li>
+            <strong>A stopping criterion</strong>
+            We need to know when to stop. Common choices: run for a fixed number of iterations, or halt when the loss stops decreasing meaningfully. Without a stopping rule, gradient descent would run forever — getting marginally better with each step but never quite finishing.
+        </li>
     </ol>
-
-    <p>After many iterations, the weights converge to their optimal values — the same ones the OLS formula would have given you directly.</p>
 
     <!-- Quiz 3 -->
     <div class="quiz" id="quiz3">
@@ -432,14 +428,14 @@
 <section>
     <h2>Why Does This Matter?</h2>
     <p>For linear regression, gradient descent is overkill — we have the exact formula. But the real power is that this same loop:</p>
-    <p style="text-align:center; color:#a0a0d0; font-style:italic; margin: 24px 0;">model &rarr; loss &rarr; gradient &rarr; update</p>
+    <p style="text-align:center; color:#a0a0d0; font-style:italic; margin: 24px 0;">data &rarr; model &rarr; loss &rarr; gradient descent &rarr; stopping criterion</p>
     <p>…is the engine behind every neural network, every large language model, every modern AI system. The architecture changes. The loss function changes. The gradients get more complex. But the loop stays the same. Linear regression is where that story begins.</p>
 </section>
 
 <!-- ── Code ───────────────────────────────────────────────────────────────── -->
 <section>
     <h2>Tinker with the Code</h2>
-    <p>The game is written in Python using Pygame, so you can open <code>main.py</code> and modify it directly. The source code is available here:</p>
+    <p>The game is written in Python using Pygame, so you can open <code>main.py</code> and modify it directly. Try changing the number of turns, the range of weights, or the amount of noise in the dataset — even small tweaks can reveal a lot about how the loss landscape behaves. The source code is available here:</p>
     <p><a href="https://github.com/i-yam/hot_or_cold" target="_blank">https://github.com/i-yam/hot_or_cold</a></p>
 </section>
 
@@ -458,8 +454,8 @@ const quizData = {
         wrong:   "Not quite! w\u2080 is the intercept \u2014 where the line meets the vertical axis. It\u2019s w\u2081 that controls the steepness."
     },
     quiz2: {
-        correct: "Correct! MSE squares the residuals and averages them. Squaring ensures negative and positive errors don\u2019t cancel out.",
-        wrong:   "Not quite \u2014 that\u2019s the Mean Absolute Error (MAE). MSE squares the residuals instead of taking their absolute value, which makes it smooth and easy to differentiate."
+        correct: "Correct! The OLS formula gives you the exact optimal weights in a single calculation \u2014 no iteration needed. This is what makes linear regression special among machine learning models.",
+        wrong:   "Not quite \u2014 that describes gradient descent, not OLS. The Ordinary Least Squares formula solves the problem directly and exactly, with no iteration required."
     },
     quiz3: {
         correct: "Exactly! Too large and the update overshoots the minimum; too small and convergence is painfully slow.",
